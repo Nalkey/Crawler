@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from Tencent.items import TencentItem
+from Tencent.Tencent.items import TencentItem
 
 
 class TencentjobSpider(scrapy.Spider):
