@@ -9,7 +9,7 @@ import json
 
 class MylianjiaPipeline(object):
     def __init__(self):
-        self.filename = open("tencent.json", "wb+")
+        self.filename = open("ZYBL.json", "wb+")
 
     def process_item(self, item, spider):
         text = json.dumps(dict(item), ensure_ascii = False) + ",\n"

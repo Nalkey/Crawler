@@ -11,6 +11,8 @@ import scrapy
 
 
 class MylianjiaItem(scrapy.Item):
+    # 房子代号
+    house_code = scrapy.Field()
     # 小区名
     community = scrapy.Field()
     # 房型

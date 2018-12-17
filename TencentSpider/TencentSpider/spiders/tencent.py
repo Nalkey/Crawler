@@ -4,7 +4,7 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 # 导入CrawlSpider类和Rule
 from scrapy.spiders import CrawlSpider, Rule
-from TencentSpider.TencentSpider.items import TencentspiderItem
+from ..items import TencentspiderItem
 
 
 class TencentSpider(CrawlSpider):
@@ -17,7 +17,7 @@ class TencentSpider(CrawlSpider):
 
     rules = [
         # 获取列表里的链接，依次发送请求，并且继续跟进，调用指定回调函数处理
-        Rule(page_link, callback='parseTencent', follow=True),
+        Rule(page_link, callback='parseTencent', follow=False),
     ]
 
     def parseTencent(self, response):
@@ -25,7 +25,7 @@ class TencentSpider(CrawlSpider):
             item = TencentspiderItem()
             item['jobName'] = each.xpath("./td[1]/a/text()").extract_first()
             item['jobLink'] = each.xpath("./td[1]/a/@href").extract_first()
-            item['jobCategory'] = each.xpatch("./td[2]/text()").extract_first()
+            item['jobCategory'] = each.xpath("./td[2]/text()").extract_first()
             item['jobNum'] = each.xpath("./td[3]/text()").extract_first()
             item['jobCity'] = each.xpath("./td[4]/text()").extract_first()
             item['publishDate'] = each.xpath("./td[5]/text()").extract_first()
