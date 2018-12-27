@@ -17,7 +17,7 @@ class TencentSpider(CrawlSpider):
 
     rules = [
         # 获取列表里的链接，依次发送请求，并且继续跟进，调用指定回调函数处理
-        Rule(page_link, callback='parseTencent', follow=False),
+        Rule(page_link, callback='parseTencent', follow=True),
     ]
 
     def parseTencent(self, response):

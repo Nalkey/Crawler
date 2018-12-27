@@ -1,21 +1,34 @@
 # -*- coding: utf-8 -*-
-from scrapy.linkextractor import LinkExtractor
-from scrapy.spider import Rule, CrawlSpider
+import scrapy
+from scrapy.linkextractors import LinkExtractor
+from scrapy.spiders import Spider, Rule, CrawlSpider
+from scrapy.http import Request
 from ..items import MylianjiaItem
 
 
-class ZyblSpider(CrawlSpider):
+class ZyblSpider(Spider):
     name = 'ZYBL'
-    allowed_domains = ['lianjia.com']
+    allowed_domains = ['bj.lianjia.com']
 
-    url = "http://bj.lianjia.com/ershoufang/"
-    community_id = "rs正阳小区北里/"
-    start_urls = [url + community_id]
+    base_url = "https://bj.lianjia.com/ershoufang/"
+    community_id = "rs西罗园/"
+    start_urls = [ base_url + community_id ]
 
-    house = LinkExtractor(tags='a', attrs='href')
-    rules = [
-        Rule(house, callback='parse', follow=False),
-    ]
+    def start_requests(self):
+        for url in self.start_urls:
+            yield Request(url, callback=self.get_links)
+    #house = LinkExtractor(allow = ("pg\d+"))
+    #rules = [
+    #    Rule(LinkExtractor(restrict_xpaths="/html/body/div[@class='content ']/div[@id='leftContent']/div[@class='contentBottom clear']/div[@class='page-box fr']/div[@class='page-box house-lst-page-box']/a/@href"), callback='parse', follow=True),
+    #]
+
+    def get_links(self, response):
+        total_page = eval(response.xpath("//div[@class='page-box house-lst-page-box']/@page-data")
+            .extract_first())['totalPage']
+        print("ttt {}".format(total_page))
+        for page in range(1, total_page+1):
+            url = self.base_url + "pg" + str(page) + self.community_id
+            yield Request(url, callback=self.parse)
 
     def parse(self, response):
         for each in response.xpath("//li[@class='clear LOGCLICKDATA']"):
@@ -70,12 +83,13 @@ class ZyblSpider(CrawlSpider):
             ).extract_first()
             # 标签
             try:
-                item['tags'] = each.xpath(
-                    "string-join((./div[@class='info clear']/div[@class='followInfo']/div[@class='tag']//text()), '-')"
-                ).extract()
-                #item['tags'] = '-'.join(each.xpath(
-                #    "./div[@class='info clear']/div[@class='followInfo']/div[@class='tag']//text()"
-                #).extract())
+                # TODO: 没找到string-join这些子函数用法
+                #item['tags'] = each.xpath(
+                #    "string-join((./div[@class='info clear']/div[@class='followInfo']/div[@class='tag']//text()), '-')"
+                #).extract()
+                item['tags'] = '-'.join(each.xpath(
+                    "./div[@class='info clear']/div[@class='followInfo']/div[@class='tag']//text()"
+                ).extract())
             except:
                 item['tags'] = "None"
             # 链接
