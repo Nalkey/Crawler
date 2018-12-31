@@ -5,8 +5,12 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import random
+from scrapy.utils.project import get_project_settings
 from scrapy import signals
 
+
+settings = get_project_settings()
 
 class MylianjiaSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -78,7 +82,19 @@ class MylianjiaDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        #return None
+        """
+        随机从USER-AGENT-LIST中获得header，并传给user_agent使用
+        :param request:
+        :param spider:
+        :return:
+        """
+        ua = random.choice(settings.get('USER_AGENT_LIST'))
+        spider.logger.info(msg='Now enter Downloader Middleware:')
+        if ua:
+            request.headers['User-Agent'] = ua
+            spider.logger.info(u'User-Agent is: {} {}'
+                               .format(request.headers.get('User-Agent'), request))
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

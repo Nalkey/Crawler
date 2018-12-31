@@ -23,6 +23,9 @@ class ZyblSpider(Spider):
     #]
 
     def get_links(self, response):
+        # 浏览器上XPATH工具的结果和代码xpath工具出现结果不一致
+        # 在Terminal执行scrapy shell "https://bj.lianjia.com/ershoufang/rs西罗园/"来进行调试
+        # response.xpath("xxx").xpath("xxx")有返回时有data显示，没返回时返回[]
         total_page = eval(response.xpath("//div[@class='page-box house-lst-page-box']/@page-data")
             .extract_first())['totalPage']
         print("ttt {}".format(total_page))
@@ -76,7 +79,7 @@ class ZyblSpider(Spider):
                     "./div[@class='info clear']/div[@class='followInfo']/div[@class='priceInfo']/div[@class='totalPrice']//text()"
                 ).extract())
             except:
-                item['tags'] = "None"
+                item['price'] = "None"
             # 单价
             item['unitPrice'] = each.xpath(
                 "./div[@class='info clear']/div[@class='followInfo']/div[@class='priceInfo']/div[@class='unitPrice']/span/text()"

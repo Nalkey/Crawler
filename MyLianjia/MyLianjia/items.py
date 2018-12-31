@@ -11,6 +11,11 @@ import scrapy
 
 
 class MylianjiaItem(scrapy.Item):
+    """
+    house_code  community  type  size  orientation,
+    decoration  elevator   floor age   district,
+    price       unitPrice  tags  link
+    """
     # 房子代号
     house_code = scrapy.Field()
     # 小区名
